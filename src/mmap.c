@@ -7,7 +7,7 @@ void *mmap_malloc(size_t sz) {
     void *ptr = mmap(NULL, sizeof(size_t) + sz, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     
     if (ptr == MAP_FAILED) {
-        perror("mmap");
+        fprintf(stderr, "mmap in mmap_malloc failed");
         return NULL;
     }
 
@@ -28,6 +28,6 @@ void mmap_free(void *ptr) {
     int ret = munmap(mapped, size);
 
     if (ret == -1) {
-        perror("munmap");
+        fprintf(stderr, "munmap in mmap_free failed");
     }
 }
