@@ -28,7 +28,7 @@ typedef struct {
     bit_map_t *bit_map;
 } buddy_allocator_t;
 
-void buddy_allocator_init(buddy_allocator_t *buddy_allocator, void *buffer, bit_map_t *bit_map);
+void buddy_allocator_init(buddy_allocator_t *buddy_allocator, void *buffer);
 
 void *buddy_allocator_malloc(size_t sz);
 

@@ -7,12 +7,10 @@
 #include <stdlib.h>
 
 buddy_allocator_t buddy_allocator;
-bit_map_t bit_map;
 uint8_t buddy_allocator_buffer[BUDDY_ALLOCATOR_BUFFER_SIZE];
-uint8_t bit_map_buffer[BIT_MAP_BUFFER_SIZE];
 
 void my_malloc_init() {
-    buddy_allocator_init(&buddy_allocator, &buddy_allocator_buffer, &bit_map);
+    buddy_allocator_init(&buddy_allocator, &buddy_allocator_buffer);
 }
 
 void *my_malloc(size_t sz) {
