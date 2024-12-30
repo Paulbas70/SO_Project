@@ -1,10 +1,12 @@
 #pragma once
 
+#include "bit_map.h"
+
 #include <stddef.h>
 
+#define BUDDY_ALLOCATOR_BUFFER_SIZE (1 << 20)
+#define BUDDY_ALLOCATOR_MIN_NODE_SIZE (BUDDY_ALLOCATOR_BUFFER_SIZE >> (BUDDY_ALLOCATOR_MAX_LEVELS - 1))
 #define BUDDY_ALLOCATOR_MAX_LEVELS 15
-#define BUDDY_ALLOCATOR_TOTAL_SIZE (1 << 20)
-#define BUDDY_ALLOCATOR_MIN_NODE_SIZE (BUDDY_ALLOCATOR_TOTAL_SIZE >> (BUDDY_ALLOCATOR_MAX_LEVELS - 1))
 
 /*
 level   size of each node
@@ -19,8 +21,14 @@ level   size of each node
 
 #define BIT_MAP_BUFFER_SIZE (1 << (BUDDY_ALLOCATOR_MAX_LEVELS + 1))
 
-struct {
+typedef struct {
+    void *buffer;
+    size_t min_node_size;
+    size_t depth;
+    bit_map_t *bit_map;
 } buddy_allocator_t;
+
+void buddy_allocator_init(buddy_allocator_t *buddy_allocator, void *buffer, bit_map_t *bit_map);
 
 void *buddy_allocator_malloc(size_t sz);
 
