@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdlib.h>
+#include <stddef.h>
 
 void *mmap_malloc(size_t sz);
 
