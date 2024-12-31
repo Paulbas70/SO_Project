@@ -5,9 +5,15 @@
 int main() {
     my_malloc_init();
 
-    int x = 1;
-    printf("\n\n\n\nrequesting %d bytes\n", x);
-    void *ptr = my_malloc(x);
+    int *ptrs[9];
+    for (int i = 0; i < 9; i++) {
+        printf("%d\n", i);
+        ptrs[i] = (int *)my_malloc(1);
+    }
+
+    for (int i = 0; i < 9; i++) {
+        my_free(ptrs[i]);
+    }
 
     return 0;
 }

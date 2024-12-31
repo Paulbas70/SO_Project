@@ -68,8 +68,6 @@ void buddy_allocator_init(buddy_allocator_t *buddy_allocator, void *buffer) {
     bit_map_init(&bit_map, bit_map_buffer, BIT_MAP_BUFFER_SIZE);
     buddy_allocator->bit_map = &bit_map;
     bit_map_set(buddy_allocator->bit_map, 0, BIT_AVAILABLE);
-    printf("buddy depth: %d\n", buddy_allocator->depth);
-    printf("buddy min node size: %ld\n", buddy_allocator->min_node_size);
 }
 
 void *buddy_allocator_malloc(buddy_allocator_t *buddy_allocator, size_t sz) {
@@ -82,13 +80,7 @@ void *buddy_allocator_malloc(buddy_allocator_t *buddy_allocator, size_t sz) {
     size_t idx_in_level = idx - ((1 << level) - 1);
     size_t buddy_size = get_buddy_size(buddy_allocator, level);
 
-    printf("real requested size: %ld\n", sz + sizeof(size_t));
-    printf("level: %d\n", level);
-    printf("idx: %ld\n", idx);
-    printf("idx_in_level: %ld\n", idx_in_level);
-    printf("buddy_size: %ld\n", buddy_size);
-
-    size_t *ptr = (size_t *)(buddy_allocator->buffer + buddy_size * idx_in_level);
+    size_t *ptr = (size_t *)((uint8_t*)buddy_allocator->buffer + buddy_size * idx_in_level);
     *ptr = (size_t)idx;
 
     print_bit_map(buddy_allocator->bit_map);
@@ -97,4 +89,23 @@ void *buddy_allocator_malloc(buddy_allocator_t *buddy_allocator, size_t sz) {
 }
 
 void buddy_allocator_free(buddy_allocator_t *buddy_allocator, void *ptr) {
+    size_t idx = *((size_t *)ptr - 1);
+
+    printf("freeing idx: %ld\n", idx);
+    bit_map_set(buddy_allocator->bit_map, idx, BIT_AVAILABLE);
+
+    while (idx != 0) {
+        size_t parent = get_parent(idx);
+        size_t left_child = get_left_child(parent);
+        size_t right_child = get_right_child(parent);
+        if (bit_map_get(buddy_allocator->bit_map, left_child) == BIT_AVAILABLE && bit_map_get(buddy_allocator->bit_map, right_child) == BIT_AVAILABLE) {
+            bit_map_set(buddy_allocator->bit_map, parent, BIT_AVAILABLE);
+            bit_map_set(buddy_allocator->bit_map, left_child, BIT_USED);
+            bit_map_set(buddy_allocator->bit_map, right_child, BIT_USED);
+        } else {
+            break;
+        }
+        idx = parent;
+    }
+    print_bit_map(buddy_allocator->bit_map);
 }
