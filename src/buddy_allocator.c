@@ -3,8 +3,8 @@
 bit_map_t bit_map;
 uint8_t bit_map_buffer[BIT_MAP_BUFFER_SIZE];
 
-size_t get_level(buddy_allocator_t *buddy_allocator, size_t sz) {
-    size_t actual_level = buddy_allocator->depth;
+int8_t get_level(buddy_allocator_t *buddy_allocator, size_t sz) {
+    int8_t actual_level = buddy_allocator->depth;
     size_t actual_size = buddy_allocator->min_node_size;
     while (actual_size < sz) {
         actual_level--;
