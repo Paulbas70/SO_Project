@@ -27,8 +27,7 @@ void *my_malloc(size_t sz) {
     if ((size_t)page_size / 4 < sz) {
         return mmap_malloc(sz);
     } else {
-        // TODO
-        return NULL;
+        return buddy_allocator_malloc(&buddy_allocator, sz);
     }
 }
 
@@ -36,9 +35,11 @@ void my_free(void *ptr) {
     if (ptr == NULL) {
         return;
     }
-
-    if (1) {
-        // TODO
+    
+    // Cast to uint8_t * to compare pointers and avoid warnings
+    uint8_t *ptr_byte = (uint8_t *)ptr;
+    if (buddy_allocator_buffer <= ptr_byte && ptr_byte < buddy_allocator_buffer + BUDDY_ALLOCATOR_BUFFER_SIZE) {
+        buddy_allocator_free(&buddy_allocator, ptr);
     } else {
         mmap_free(ptr);
     }

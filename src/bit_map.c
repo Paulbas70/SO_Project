@@ -1,6 +1,7 @@
 #include "bit_map.h"
 
 #include <string.h>
+#include <stdio.h>
 
 void bit_map_init(bit_map_t *bit_map, uint8_t *buffer, size_t size) {
     bit_map->buffer = buffer;
@@ -25,11 +26,16 @@ bool bit_map_get(bit_map_t *bit_map, size_t idx) {
 }
 
 void print_bit_map(bit_map_t *bit_map) {
-    for (size_t i = 0; i < bit_map->size; i++) {
-        for (int j = 0; j < 8; j++) {
-            printf("%d", (bit_map->buffer[i] >> j) & 1);
+    // used with low depth values
+    size_t pow = 1;
+    size_t cnt = pow;
+    for (size_t i = 0; i < 8 * bit_map->size; i++) {
+        if (cnt == 0) {
+            printf("\n");
+            pow *= 2;
+            cnt = pow;
         }
-        printf(" ");
+        printf("%d", bit_map_get(bit_map, i));
+        cnt--;
     }
-    printf("\n");
 }
