@@ -69,10 +69,12 @@ void buddy_allocator_init(buddy_allocator_t *buddy_allocator, void *buffer) {
     buddy_allocator->bit_map = &bit_map;
     bit_map_set(buddy_allocator->bit_map, 0, BIT_AVAILABLE);
     printf("Buddy allocator initialized with depth %d and min node size %zu\n", buddy_allocator->depth, buddy_allocator->min_node_size);
+    printf("Levels start from 0 to %d\n\n", buddy_allocator->depth - 1);
 }
 
 void *buddy_allocator_malloc(buddy_allocator_t *buddy_allocator, size_t sz) {
-    printf("Requesting allocation of size %zu\n", sz);
+    printf("Requesting allocation of size %zu to buddy allocator\n", sz);
+    printf("Real allocation size %zu\n", sz + sizeof(size_t));
     uint8_t level = get_level(buddy_allocator, sz + sizeof(size_t));
     int64_t idx = get_buddy_idx(buddy_allocator, level);
     if (idx == -1) {

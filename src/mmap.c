@@ -6,6 +6,9 @@
 void *mmap_malloc(size_t sz) {
     void *ptr = mmap(NULL, sizeof(size_t) + sz, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     
+    printf("Requesting allocation of size %zu to mmap\n", sz);
+    printf("Real allocation size %zu\n", sz + sizeof(size_t));
+
     if (ptr == MAP_FAILED) {
         fprintf(stderr, "mmap in mmap_malloc failed");
         return NULL;
@@ -24,6 +27,8 @@ void mmap_free(void *ptr) {
 
     // Read the size of the mapped memory from the metadata
     size_t size = *((size_t *)mapped);
+
+    printf("Freeing size %ld\n", size);
 
     int ret = munmap(mapped, size);
 
