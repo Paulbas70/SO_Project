@@ -38,4 +38,5 @@ void print_bit_map(bit_map_t *bit_map) {
         printf("%d", bit_map_get(bit_map, i));
         cnt--;
     }
+    printf("\n\n");
 }
