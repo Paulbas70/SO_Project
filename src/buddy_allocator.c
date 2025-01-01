@@ -68,9 +68,11 @@ void buddy_allocator_init(buddy_allocator_t *buddy_allocator, void *buffer) {
     bit_map_init(&bit_map, bit_map_buffer, BIT_MAP_BUFFER_SIZE);
     buddy_allocator->bit_map = &bit_map;
     bit_map_set(buddy_allocator->bit_map, 0, BIT_AVAILABLE);
+    printf("Buddy allocator initialized with depth %d and min node size %zu\n", buddy_allocator->depth, buddy_allocator->min_node_size);
 }
 
 void *buddy_allocator_malloc(buddy_allocator_t *buddy_allocator, size_t sz) {
+    printf("Requesting allocation of size %zu\n", sz);
     uint8_t level = get_level(buddy_allocator, sz + sizeof(size_t));
     int64_t idx = get_buddy_idx(buddy_allocator, level);
     if (idx == -1) {
@@ -83,15 +85,14 @@ void *buddy_allocator_malloc(buddy_allocator_t *buddy_allocator, size_t sz) {
     size_t *ptr = (size_t *)((uint8_t*)buddy_allocator->buffer + buddy_size * idx_in_level);
     *ptr = (size_t)idx;
 
-    print_bit_map(buddy_allocator->bit_map);
-
+    printf("Allocated at index %ld, level %d, size %zu\n", idx, level, buddy_size);
     return (void *)(ptr + 1);
 }
 
 void buddy_allocator_free(buddy_allocator_t *buddy_allocator, void *ptr) {
     size_t idx = *((size_t *)ptr - 1);
 
-    printf("freeing idx: %ld\n", idx);
+    printf("Freeing index %ld\n", idx);
     bit_map_set(buddy_allocator->bit_map, idx, BIT_AVAILABLE);
 
     while (idx != 0) {
@@ -102,10 +103,10 @@ void buddy_allocator_free(buddy_allocator_t *buddy_allocator, void *ptr) {
             bit_map_set(buddy_allocator->bit_map, parent, BIT_AVAILABLE);
             bit_map_set(buddy_allocator->bit_map, left_child, BIT_USED);
             bit_map_set(buddy_allocator->bit_map, right_child, BIT_USED);
+            printf("Merging nodes at index %ld\n", parent);
         } else {
             break;
         }
         idx = parent;
     }
-    print_bit_map(buddy_allocator->bit_map);
 }
