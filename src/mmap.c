@@ -30,7 +30,7 @@ void mmap_free(void *ptr) {
 
     printf("Freeing size %ld\n", size);
 
-    int ret = munmap(mapped, size);
+    int ret = munmap(mapped, sizeof(size_t) + size);
 
     if (ret == -1) {
         fprintf(stderr, "munmap in mmap_free failed");

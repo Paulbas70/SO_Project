@@ -21,7 +21,7 @@ int main()
 
     int *ptr4 = my_malloc(1025);
     *ptr4 = 4;
-    printf("The value of ptr4 is %d\n\n", *ptr3);
+    printf("The value of ptr4 is %d\n\n", *ptr4);
 
     printf("Freeing ptr\n");
     my_free(ptr);
